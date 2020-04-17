@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import "./App.css";
 import Menu from "../Menu/Menu";
 import List from "../List/List";
@@ -23,14 +23,24 @@ const initialState = [
 
 function App() {
   const [books, setBooks] = useState(initialState);
+  const [copyBooks, setCopyBooks] = useState(initialState);
+  const inputSearch = useRef(null);
 
   const onSearch = (query) => {
     if (query === "") {
-      setBooks(initialState);
+      setCopyBooks([...books]);
     } else {
       const temp = [...books];
-      let res = temp.filter((item) => item.title.toLowerCase().includes(query));
-      setBooks(res);
+      let res = temp.filter((item) =>
+        item.title.toLowerCase().trim().includes(query)
+      );
+      setCopyBooks(res);
+    }
+  };
+
+  const clearInputSearch = () => {
+    if (inputSearch.current.value.trim() !== "") {
+      inputSearch.current.value = "";
     }
   };
 
@@ -42,12 +52,17 @@ function App() {
     temp.push(item);
 
     setBooks(temp);
+    setCopyBooks(temp);
+    clearInputSearch();
   };
 
   const remove = (id) => {
     let temp = [...books];
     const res = temp.filter((item) => item.id !== id);
+
     setBooks(res);
+    setCopyBooks(res);
+    clearInputSearch();
   };
 
   const updateRating = (item) => {
@@ -59,14 +74,20 @@ function App() {
     temp[index].rating = item.rating;
 
     setBooks(temp);
+    setCopyBooks(temp);
   };
 
   return (
     <div className="app">
-      <Menu title="Book Store" onSearch={onSearch} onAdd={addItem} />
+      <Menu
+        title="Book Store"
+        ref={inputSearch}
+        onSearch={onSearch}
+        onAdd={addItem}
+      />
       <List
         className="list"
-        items={books}
+        items={copyBooks}
         onRemove={remove}
         onUpdateRating={updateRating}
       />

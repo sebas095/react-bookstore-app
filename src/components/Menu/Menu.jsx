@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, forwardRef } from "react";
 import "./Menu.css";
 import Search from "../Search";
 import PanelAdd from "../PanellAdd";
 
-const Menu = ({ title, onSearch, onAdd }) => {
+const Menu = forwardRef(({ title, onSearch, onAdd }, ref) => {
   const [newItemPanel, setNewItemPanel] = useState(false);
 
   const add = () => {
@@ -19,7 +19,7 @@ const Menu = ({ title, onSearch, onAdd }) => {
       <div className="subcontainer">
         <div className="logo">{title}</div>
         <div className="search">
-          <Search onSearch={onSearch} />
+          <Search onSearch={onSearch} ref={ref} />
         </div>
         <div className="actions">
           <button onClick={add} className="button btn-blue">
@@ -30,6 +30,6 @@ const Menu = ({ title, onSearch, onAdd }) => {
       {newItemPanel ? <PanelAdd onHide={onCancel} onAdd={onAdd} /> : ""}
     </div>
   );
-};
+});
 
 export default Menu;
