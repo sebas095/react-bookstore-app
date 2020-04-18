@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./App.css";
 import Menu from "../Menu/Menu";
 import List from "../List/List";
@@ -38,11 +38,16 @@ function App() {
     }
   };
 
-  const clearInputSearch = () => {
+  useEffect(() => {
+    const temp = [...books];
     if (inputSearch.current.value.trim() !== "") {
-      inputSearch.current.value = "";
-    }
-  };
+      const query = inputSearch.current.value.trim();
+      let res = temp.filter((item) =>
+        item.title.toLowerCase().trim().includes(query)
+      );
+      setCopyBooks(res);
+    } else setCopyBooks(temp);
+  }, [books]);
 
   const addItem = (item) => {
     let temp = [...books];
@@ -52,8 +57,6 @@ function App() {
     temp.push(item);
 
     setBooks(temp);
-    setCopyBooks(temp);
-    clearInputSearch();
   };
 
   const remove = (id) => {
@@ -61,8 +64,6 @@ function App() {
     const res = temp.filter((item) => item.id !== id);
 
     setBooks(res);
-    setCopyBooks(res);
-    clearInputSearch();
   };
 
   const updateRating = (item) => {
